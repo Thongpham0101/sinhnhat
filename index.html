@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chúc mừng sinh nhật</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Be+Vietnam+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#1b0b2e;--bg2:#3a1450;--rose:#f4a6b8;--gold:#f6d49b;--ink:#fff4f7;--glass:rgba(255,255,255,.08)}
+*{box-sizing:border-box;margin:0}
+html,body{min-height:100%}
+body{font-family:'Be Vietnam Pro',sans-serif;color:var(--ink);background:radial-gradient(ellipse at top,var(--bg2),var(--bg1) 70%) fixed;overflow-x:hidden}
+canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:50}
+h1,h2{font-family:'Dancing Script',cursive;font-weight:700;color:var(--gold);text-align:center}
+h1{font-size:clamp(2.6rem,9vw,5rem);line-height:1.1}
+h2{font-size:clamp(2rem,6vw,3rem);margin-bottom:1rem}
+section{max-width:760px;margin:0 auto;padding:4rem 1.2rem;display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;text-align:center}
+section.on{display:flex;animation:in .9s ease}
+@keyframes in{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+button{font:inherit;font-weight:600;color:#3a1450;background:linear-gradient(135deg,var(--gold),var(--rose));border:0;border-radius:999px;padding:.8rem 1.8rem;cursor:pointer;box-shadow:0 6px 24px rgba(244,166,184,.4);transition:transform .2s}
+button:hover{transform:translateY(-2px) scale(1.04)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.sub{color:#e9d3f0;font-weight:300;max-width:46ch;line-height:1.7}
+/* bánh kem */
+.cake{position:relative;width:200px;height:190px;cursor:pointer;margin-top:1rem}
+.layer{position:absolute;left:50%;transform:translateX(-50%);border-radius:14px}
+.l1{bottom:0;width:200px;height:70px;background:linear-gradient(#f9c6d2,var(--rose))}
+.l2{bottom:62px;width:150px;height:56px;background:linear-gradient(#fff0f4,#f8d3dd)}
+.l1::before,.l2::before{content:"";position:absolute;top:0;left:0;right:0;height:16px;border-radius:14px 14px 40% 40%;background:#fff}
+.candle{position:absolute;bottom:112px;width:10px;height:44px;background:repeating-linear-gradient(45deg,var(--gold) 0 6px,#fff 6px 12px);border-radius:3px}
+.flame{position:absolute;top:-26px;left:-3px;width:16px;height:26px;background:radial-gradient(#fff 15%,#ffc94a 50%,#ff7a2f);border-radius:50% 50% 50% 50%/60% 60% 40% 40%;animation:fl .25s infinite alternate;box-shadow:0 0 22px 8px rgba(255,190,80,.6);transition:opacity .4s}
+.out .flame{opacity:0}
+@keyframes fl{to{transform:scale(1.1,.92) rotate(4deg)}}
+/* thư viện ảnh */
+.gallery{position:relative;width:min(92vw,520px);aspect-ratio:4/5;perspective:900px}
+.photo{position:absolute;inset:0;border-radius:18px;overflow:hidden;background:var(--glass);border:8px solid #fff;box-shadow:0 20px 50px rgba(0,0,0,.5);opacity:0;transform:rotateY(60deg) scale(.8);transition:all .8s}
+.photo.cur{opacity:1;transform:rotate(var(--r,0deg))}
+.photo img{width:100%;height:100%;object-fit:cover}
+.photo figcaption{position:absolute;bottom:0;left:0;right:0;padding:1.4rem 1rem .8rem;background:linear-gradient(transparent,rgba(0,0,0,.7));font-family:'Dancing Script',cursive;font-size:1.5rem}
+.ph-empty{width:100%;height:100%;display:grid;place-items:center;font-size:4rem;background:linear-gradient(135deg,var(--bg2),var(--rose))}
+.nav{display:flex;gap:1rem;align-items:center}
+/* khoá */
+.lock{background:var(--glass);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.18);border-radius:24px;padding:2rem 1.5rem;width:min(92vw,460px);display:flex;flex-direction:column;gap:1rem;align-items:center}
+.lock .ic{font-size:3rem}
+input[type=date]{font:inherit;padding:.8rem 1rem;border-radius:12px;border:2px solid var(--rose);background:#2a1040;color:var(--ink);color-scheme:dark;width:100%}
+.shake{animation:sk .5s}
+@keyframes sk{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+#msg{min-height:1.5rem;font-size:.95rem;color:var(--gold)}
+video{width:min(92vw,640px);border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.6);background:#000}
+/* thư */
+.env{position:relative;width:min(88vw,340px);height:220px;cursor:pointer}
+.env .back{position:absolute;inset:0;background:var(--rose);border-radius:10px}
+.env .flap{position:absolute;top:0;left:0;right:0;height:110px;background:#e98aa2;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .7s;z-index:3}
+.env .front{position:absolute;inset:0;background:linear-gradient(135deg,#f9c6d2 50%,transparent 50%) , linear-gradient(225deg,#f6b4c4 50%,transparent 50%);border-radius:10px;z-index:2}
+.env .heart{position:absolute;left:50%;top:92px;transform:translate(-50%,-50%);font-size:2.2rem;z-index:4;animation:hb 1.2s infinite}
+@keyframes hb{50%{transform:translate(-50%,-50%) scale(1.25)}}
+.env.open .flap{transform:rotateX(180deg);z-index:1}
+.env.open .heart{display:none}
+.letter{display:none;background:#fffaf2;color:#4a2a3a;border-radius:16px;padding:1.8rem 1.6rem;width:min(92vw,560px);text-align:left;line-height:1.9;box-shadow:0 20px 60px rgba(0,0,0,.5);white-space:pre-wrap;font-size:1.02rem}
+.letter.show{display:block;animation:in .8s}
+.letter b{font-family:'Dancing Script',cursive;font-size:1.7rem;color:#c0476b}
+.mute{position:fixed;top:12px;right:12px;z-index:60;padding:.5rem .9rem}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<button class="mute" id="mute" title="Bật/tắt nhạc">🎵</button>
+
+<!-- 1. Bánh kem -->
+<section id="s1" class="on">
+  <h1 id="title"></h1>
+  <p class="sub">Có một điều bất ngờ đang chờ bạn. Trước hết, hãy ước một điều ước rồi chạm vào bánh để thổi nến nhé.</p>
+  <div class="cake" id="cake" role="button" tabindex="0" aria-label="Thổi nến">
+    <div class="layer l2"></div><div class="layer l1"></div>
+    <div class="candle" style="left:68px"><i class="flame"></i></div>
+    <div class="candle" style="left:95px"><i class="flame"></i></div>
+    <div class="candle" style="left:122px"><i class="flame"></i></div>
+  </div>
+  <p id="hint1" class="sub">Chạm vào bánh để thổi nến 🎂</p>
+</section>
+
+<!-- 2. Ảnh -->
+<section id="s2">
+  <h2>Những khoảnh khắc của chúng mình</h2>
+  <div class="gallery" id="gallery"></div>
+  <div class="nav"><button id="prev">‹</button><span id="count"></span><button id="next">›</button></div>
+  <button id="toLock">Tiếp tục 💝</button>
+</section>
+
+<!-- 3. Khoá ngày quen nhau -->
+<section id="s3">
+  <h2>Món quà đang bị khoá</h2>
+  <div class="lock" id="lock">
+    <div class="ic" id="lockIc">🔒</div>
+    <p class="sub">Bạn còn nhớ ngày chúng mình quen nhau không? Chọn đúng ngày để mở quà.</p>
+    <input type="date" id="guess" aria-label="Ngày quen nhau">
+    <button id="check">Mở khoá</button>
+    <p id="msg"></p>
+  </div>
+</section>
+
+<!-- 4. Video -->
+<section id="s4">
+  <h2>Quà dành riêng cho bạn</h2>
+  <video id="vid" controls playsinline preload="metadata"></video>
+  <button id="toLetter">Còn một lá thư nữa 💌</button>
+</section>
+
+<!-- 5. Thư -->
+<section id="s5">
+  <h2>Một lá thư nhỏ</h2>
+  <div class="env" id="env" role="button" tabindex="0" aria-label="Mở thư">
+    <div class="back"></div><div class="front"></div><div class="flap"></div><div class="heart">💗</div>
+  </div>
+  <div class="letter" id="letter"></div>
+  <button id="again" style="display:none">🎆 Bắn pháo hoa lần nữa</button>
+</section>
+
+<audio id="bgm" loop></audio>
+
+<script>
+/* ============ ✏️ CHỈNH SỬA Ở ĐÂY ============ */
+const CONFIG = {
+  name: "Bé yêu",                       // Tên người nhận
+  meetDate: "2026-05-26",               // Ngày quen nhau (năm-tháng-ngày) — đáp án
+  hint: "Gợi ý: hôm đó trời hơi se lạnh... 🌸",
+  video: "video/quatang.mp4",           // Đường dẫn video quà tặng
+  music: "music/nhac.mp3",              // Nhạc nền (để "" nếu không dùng)
+  photos: [                              // Thêm/bớt ảnh tuỳ thích
+    {src:"images/1.jpg", cap:"Lần đầu xem phim cùng nhau"},
+    {src:"images/2.jpg", cap:"Một ngày thật vui"},
+    {src:"images/3.jpg", cap:"Nụ cười đẹp nhất"},
+    {src:"images/4.jpg", cap:"Mãi bên nhau nhé"}
+  ],
+  letter: `<b>Gửi {name} thân yêu,</b>
+
+Hôm nay là sinh nhật của em, và anh muốn nói rằng em là điều đẹp nhất xảy ra trong cuộc đời anh.
+
+Cảm ơn em vì đã luôn ở bên, vì những lần cười thật tươi và cả những lúc mình cùng nhau vượt qua khó khăn.
+
+Chúc em tuổi mới thật nhiều sức khoẻ, bình an và hạnh phúc. Mong mọi ước mơ của em đều thành hiện thực.
+
+Yêu em rất nhiều ❤️`
+};
+/* ============================================= */
+
+const $ = id => document.getElementById(id);
+const show = id => { document.querySelectorAll('section').forEach(s => s.classList.remove('on')); $(id).classList.add('on'); scrollTo(0,0); };
+$('title').innerHTML = `Chúc mừng sinh nhật<br>${CONFIG.name} 🎉`;
+
+/* ---------- Hiệu ứng: tim rơi + pháo hoa + confetti ---------- */
+const cv = $('fx'), cx = cv.getContext('2d'); let W, H, parts = [];
+const resize = () => { W = cv.width = innerWidth; H = cv.height = innerHeight; }; resize(); addEventListener('resize', resize);
+const EMO = ['💗','💖','✨','🌸','💫'];
+function hearts(){ if (Math.random() < .06) parts.push({t:'e', x:Math.random()*W, y:-20, vy:.6+Math.random()*1.2, vx:Math.sin(Math.random()*6)*.4, s:14+Math.random()*16, e:EMO[Math.random()*EMO.length|0], life:1e9}); }
+function confetti(n=140, x=W/2, y=H/2){ for(let i=0;i<n;i++){ const a=Math.random()*6.28, v=3+Math.random()*9; parts.push({t:'c', x, y, vx:Math.cos(a)*v, vy:Math.sin(a)*v-4, g:.18, s:5+Math.random()*6, c:`hsl(${Math.random()*360},90%,65%)`, life:110, r:Math.random()*6}); } }
+function firework(){ const x=W*(.15+Math.random()*.7), y=H*(.15+Math.random()*.4), h=Math.random()*360; for(let i=0;i<70;i++){ const a=i/70*6.28, v=2+Math.random()*3.5; parts.push({t:'f', x, y, vx:Math.cos(a)*v, vy:Math.sin(a)*v, g:.04, s:2.4, c:`hsl(${h+Math.random()*40},100%,65%)`, life:80}); } }
+(function loop(){
+  cx.clearRect(0,0,W,H); hearts();
+  parts = parts.filter(p => p.life-- > 0 && p.y < H+40);
+  for (const p of parts){
+    if (p.t==='e'){ p.y+=p.vy; p.x+=p.vx; cx.font=p.s+'px serif'; cx.globalAlpha=.8; cx.fillText(p.e,p.x,p.y); }
+    else { p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.vx*=.99; cx.globalAlpha=Math.min(1,p.life/30); cx.fillStyle=p.c; if(p.t==='c'){cx.save();cx.translate(p.x,p.y);cx.rotate(p.life*.2+p.r);cx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);cx.restore();} else {cx.beginPath();cx.arc(p.x,p.y,p.s,0,6.28);cx.fill();} }
+  }
+  cx.globalAlpha=1; requestAnimationFrame(loop);
+})();
+let fwTimer; const showFireworks = (ms=6000) => { clearInterval(fwTimer); const t=setInterval(firework,380); fwTimer=t; setTimeout(()=>clearInterval(t),ms); };
+
+/* ---------- Nhạc nền ---------- */
+const bgm = $('bgm'); let musicOn = false;
+if (CONFIG.music) bgm.src = CONFIG.music; else $('mute').style.display='none';
+const playMusic = () => { if(CONFIG.music && !musicOn){ bgm.play().then(()=>{musicOn=true;$('mute').textContent='🎵'}).catch(()=>{}); } };
+$('mute').onclick = () => { if(musicOn){bgm.pause();musicOn=false;$('mute').textContent='🔇'} else playMusic(); };
+
+/* ---------- 1. Thổi nến ---------- */
+let blown = false;
+function blow(){
+  if (blown) return; blown = true; $('cake').classList.add('out');
+  confetti(200); showFireworks(3500); playMusic();
+  $('hint1').innerHTML = 'Điều ước đã được gửi đi rồi 💫';
+  setTimeout(() => show('s2'), 3200);
+}
+$('cake').onclick = blow;
+$('cake').onkeydown = e => { if (e.key==='Enter'||e.key===' ') blow(); };
+
+/* ---------- 2. Thư viện ảnh ---------- */
+const g = $('gallery'); let idx = 0;
+CONFIG.photos.forEach((p,i) => {
+  const f = document.createElement('figure'); f.className = 'photo'; f.style.setProperty('--r', (i%2?2:-2)+'deg');
+  const img = new Image(); img.src = p.src; img.alt = p.cap;
+  img.onerror = () => { img.replaceWith(Object.assign(document.createElement('div'),{className:'ph-empty',textContent:'📷'})); };
+  f.append(img); const c = document.createElement('figcaption'); c.textContent = p.cap; f.append(c); g.append(f);
+});
+const photos = [...g.children];
+function go(n){ idx = (n + photos.length) % photos.length; photos.forEach((p,i)=>p.classList.toggle('cur', i===idx)); $('count').textContent = `${idx+1} / ${photos.length}`; }
+$('prev').onclick = () => go(idx-1); $('next').onclick = () => go(idx+1); go(0);
+setInterval(() => { if ($('s2').classList.contains('on')) go(idx+1); }, 4500);
+$('toLock').onclick = () => show('s3');
+
+/* ---------- 3. Đoán ngày ---------- */
+let tries = 0;
+$('check').onclick = () => {
+  const v = $('guess').value;
+  if (!v) { $('msg').textContent = 'Hãy chọn một ngày nhé.'; return; }
+  if (v === CONFIG.meetDate) {
+    $('lockIc').textContent = '🔓'; $('msg').textContent = 'Chính xác! Quà đang mở ra...';
+    confetti(250); showFireworks(4000);
+    setTimeout(() => { show('s4'); $('vid').src = CONFIG.video; }, 1800);
+  } else {
+    tries++; $('lock').classList.remove('shake'); void $('lock').offsetWidth; $('lock').classList.add('shake');
+    $('msg').textContent = tries >= 2 ? CONFIG.hint : 'Chưa đúng rồi, thử lại nhé 💭';
+    if (tries >= 3) { const d = new Date(CONFIG.meetDate); $('msg').textContent += ` (Năm ${d.getFullYear()})`; }
+  }
+};
+
+/* ---------- 4 → 5. Thư ---------- */
+$('vid').addEventListener('play', () => { if (musicOn) bgm.pause(); });
+$('vid').addEventListener('pause', () => { if (musicOn) bgm.play().catch(()=>{}); });
+$('toLetter').onclick = () => { $('vid').pause(); show('s5'); };
+
+let typed = false;
+function openEnv(){
+  if (typed) return; typed = true; $('env').classList.add('open'); showFireworks(5000);
+  setTimeout(() => {
+    const L = $('letter'); L.classList.add('show');
+    const html = CONFIG.letter.replace('{name}', CONFIG.name); let i = 0, out = '';
+    (function type(){
+      if (html[i] === '<') i = html.indexOf('>', i) + 1; else i++;
+      L.innerHTML = html.slice(0, i); 
+      if (i < html.length) setTimeout(type, 38); else { $('again').style.display = 'inline-block'; confetti(180); }
+    })();
+  }, 800);
+}
+$('env').onclick = openEnv;
+$('env').onkeydown = e => { if (e.key==='Enter'||e.key===' ') openEnv(); };
+$('again').onclick = () => { confetti(200); showFireworks(6000); };
+</script>
+</body>
+</html>
